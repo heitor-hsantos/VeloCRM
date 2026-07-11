@@ -1,9 +1,7 @@
 package com.core.velocrm.opportunity.application.port.in;
 
-import com.core.velocrm.opportunity.domain.model.Stage;
-
-import java.util.UUID;
+import com.core.velocrm.opportunity.domain.model.Opportunity;
 
 public interface CreateOpportunityUseCase {
-    void createOpportunity(UUID opportunityId, Stage newStage);
+    Opportunity createOpportunity(Opportunity opportunity);
 }
