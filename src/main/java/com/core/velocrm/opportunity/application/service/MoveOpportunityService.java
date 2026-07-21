@@ -2,6 +2,7 @@ package com.core.velocrm.opportunity.application.service;
 
 import com.core.velocrm.opportunity.application.port.in.MoveOpportunityUseCase;
 import com.core.velocrm.opportunity.application.port.out.OpportunityRepositoryPort;
+import com.core.velocrm.opportunity.domain.exception.OpportunityNotFoundException;
 import com.core.velocrm.opportunity.domain.model.Opportunity;
 import com.core.velocrm.opportunity.domain.model.Stage;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class MoveOpportunityService implements MoveOpportunityUseCase {
     @Transactional
     public void moveOpportunity(UUID opportunityId, Stage newStage) {
         Opportunity opportunity = opportunityRepositoryPort.findById(opportunityId)
-                .orElseThrow(() -> new RuntimeException("Opportunity not found"));
+                .orElseThrow(() -> new OpportunityNotFoundException(opportunityId));
 
         opportunity.moveToStage(newStage);
 
