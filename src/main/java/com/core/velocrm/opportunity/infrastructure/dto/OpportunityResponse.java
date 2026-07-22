@@ -4,6 +4,7 @@ import com.core.velocrm.opportunity.domain.model.Stage;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.Map;
 
 public record OpportunityResponse(
         UUID id,
@@ -11,7 +12,7 @@ public record OpportunityResponse(
         String description,
         BigDecimal amount,
         Stage stage,
-        String customAttributes,
+        Map<String, Object> customAttributes,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {}
