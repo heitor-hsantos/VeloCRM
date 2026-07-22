@@ -3,6 +3,7 @@ package com.core.velocrm.opportunity.domain.model;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.Map;
 
 public class Opportunity {
 
@@ -11,11 +12,11 @@ public class Opportunity {
     private final String description;
     private final BigDecimal amount;
     private Stage stage;
-    private final String customAttributes;
+    private final Map<String, Object> customAttributes;
     private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Opportunity(UUID id, String title, String description, BigDecimal amount, Stage stage, String customAttributes, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Opportunity(UUID id, String title, String description, BigDecimal amount, Stage stage, Map<String, Object> customAttributes, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -54,7 +55,7 @@ public class Opportunity {
         return stage;
     }
 
-    public String getCustomAttributes() {
+    public Map<String, Object> getCustomAttributes() {
         return customAttributes;
     }
 

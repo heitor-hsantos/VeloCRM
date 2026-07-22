@@ -8,6 +8,7 @@ import org.hibernate.type.SqlTypes;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.Map;
 
 @Entity
 @Table(name = "opportunities")
@@ -26,7 +27,7 @@ public class OpportunityEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String customAttributes;
+    private Map<String, Object> customAttributes;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -71,11 +72,11 @@ public class OpportunityEntity {
         this.stage = stage;
     }
 
-    public String getCustomAttributes() {
+    public Map<String, Object> getCustomAttributes() {
         return customAttributes;
     }
 
-    public void setCustomAttributes(String customAttributes) {
+    public void setCustomAttributes(Map<String, Object> customAttributes) {
         this.customAttributes = customAttributes;
     }
 
