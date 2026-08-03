@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class OpportunityController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Criar nova oportunidade")
     public ResponseEntity<OpportunityResponse> createOpportunity(
             @Valid @RequestBody OpportunityRequest request
@@ -48,6 +50,7 @@ public class OpportunityController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SALES')")
     @Operation(summary = "Buscar oportunidade por ID")
     public ResponseEntity<OpportunityResponse> getOpportunityById(@PathVariable UUID id) {
         return findOpportunityByIdUseCase.findById(id)
@@ -57,6 +60,7 @@ public class OpportunityController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SALES')")
     @Operation(summary = "Listar todas as oportunidades")
     public ResponseEntity<List<OpportunityResponse>> getAllOpportunities() {
         var list = findAllOpportunitiesUseCase.findAll().stream()
@@ -66,6 +70,7 @@ public class OpportunityController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Atualizar oportunidade")
     public ResponseEntity<OpportunityResponse> updateOpportunity(
             @PathVariable UUID id,
@@ -78,6 +83,7 @@ public class OpportunityController {
     }
 
     @PatchMapping("/{id}/move")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SALES')")
     @Operation(summary = "Mover oportunidade para outro estágio")
     public ResponseEntity<OpportunityResponse> moveOpportunity(
             @PathVariable UUID id,
@@ -89,6 +95,7 @@ public class OpportunityController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Deletar oportunidade")
     public ResponseEntity<Void> deleteOpportunity(@PathVariable UUID id) {
         deleteOpportunityUseCase.deleteOpportunity(id);
