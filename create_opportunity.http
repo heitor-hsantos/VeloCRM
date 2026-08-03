@@ -1,0 +1,18 @@
+### Create a new opportunity
+POST http://localhost:8080/api/opportunities
+Content-Type: application/json
+Accept: */*
+Content-Length: 222
+User-Agent: IntelliJ HTTP Client/IntelliJ IDEA 2026.1.3
+Accept-Encoding: br, deflate, gzip, x-gzip
+
+{
+  "title": "Software License Deal",
+  "description": "Annual license for our software product.",
+  "amount": 25000.00,
+  "stage": "PROSPECTING",
+  "customAttributes": {
+    "source": "webinar",
+    "priority": "high"
+  }
+}

@@ -2,6 +2,7 @@ package com.core.velocrm.opportunity.infrastructure.web.controller;
 
 import com.core.velocrm.opportunity.application.port.in.*;
 import com.core.velocrm.opportunity.domain.exception.OpportunityNotFoundException;
+import com.core.velocrm.opportunity.infrastructure.dto.MoveOpportunityRequest;
 import com.core.velocrm.opportunity.infrastructure.dto.OpportunityRequest;
 import com.core.velocrm.opportunity.infrastructure.dto.OpportunityResponse;
 import com.core.velocrm.opportunity.infrastructure.persistence.mapper.OpportunityMapper;
@@ -76,10 +77,22 @@ public class OpportunityController {
         return ResponseEntity.ok(response);
     }
 
+    @PatchMapping("/{id}/move")
+    @Operation(summary = "Mover oportunidade para outro estágio")
+    public ResponseEntity<OpportunityResponse> moveOpportunity(
+            @PathVariable UUID id,
+            @Valid @RequestBody MoveOpportunityRequest request
+    ) {
+        var updatedDomain = moveOpportunityUseCase.moveOpportunity(id, request.stage());
+        var response = mapper.toResponse(updatedDomain);
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar oportunidade")
     public ResponseEntity<Void> deleteOpportunity(@PathVariable UUID id) {
         deleteOpportunityUseCase.deleteOpportunity(id);
         return ResponseEntity.noContent().build();
     }
+
 }

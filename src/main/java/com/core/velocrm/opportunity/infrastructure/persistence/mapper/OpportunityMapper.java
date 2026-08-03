@@ -20,7 +20,7 @@ public interface OpportunityMapper {
 
     OpportunityEntity toEntity(Opportunity domain);
 
-    @Mapping(target = "id", expression = "java(UUID.randomUUID())")
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(LocalDateTime.now())")
     @Mapping(target = "updatedAt", expression = "java(LocalDateTime.now())")
     Opportunity toDomainFromRequest(OpportunityRequest request);
