@@ -7,7 +7,6 @@ import java.util.Set;
 public record RegisterUserRequest(
         @NotBlank @Email String email,
         @NotBlank String password,
-        @NotBlank String accountId,
         Set<String> roles
 ) {
 }

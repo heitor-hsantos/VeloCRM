@@ -27,7 +27,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Registrar novo usuário")
     public ResponseEntity<User> register(@Valid @RequestBody RegisterUserRequest request) {
-        User user = registerUserUseCase.registerUser(request.email(), request.password(), request.accountId(), request.roles());
+        User user = registerUserUseCase.registerUser(request.email(), request.password(), request.roles());
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 

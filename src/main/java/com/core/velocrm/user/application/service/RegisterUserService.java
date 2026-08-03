@@ -20,7 +20,7 @@ public class RegisterUserService implements RegisterUserUseCase {
 
     @Override
     @Transactional
-    public User registerUser(String email, String rawPassword, String accountId, Set<String> roles) {
+    public User registerUser(String email, String rawPassword, Set<String> roles) {
         if (userRepositoryPort.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("User with email already exists");
         }
@@ -30,7 +30,7 @@ public class RegisterUserService implements RegisterUserUseCase {
         User user = User.builder()
                 .email(email)
                 .password(passwordEncoder.encode(rawPassword))
-                .accountId(accountId)
+                .accountId(java.util.UUID.randomUUID().toString())
                 .roles(assignedRoles)
                 .build();
 
