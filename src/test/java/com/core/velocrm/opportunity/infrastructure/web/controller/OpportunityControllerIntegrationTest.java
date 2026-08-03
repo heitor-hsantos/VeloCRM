@@ -3,6 +3,7 @@ package com.core.velocrm.opportunity.infrastructure.web.controller;
 import com.core.velocrm.opportunity.application.port.in.*;
 import com.core.velocrm.opportunity.domain.model.Opportunity;
 import com.core.velocrm.opportunity.domain.model.Stage;
+import com.core.velocrm.opportunity.infrastructure.dto.MoveOpportunityRequest;
 import com.core.velocrm.opportunity.infrastructure.dto.OpportunityRequest;
 import com.core.velocrm.opportunity.infrastructure.dto.OpportunityResponse;
 import com.core.velocrm.opportunity.infrastructure.persistence.mapper.OpportunityMapper;
@@ -80,7 +81,7 @@ class OpportunityControllerIntegrationTest {
                 "Description",
                 BigDecimal.TEN,
                 Stage.PROSPECTING,
-                "{}"
+                java.util.Map.of()
         );
 
         Opportunity domain = new Opportunity(
@@ -89,7 +90,7 @@ class OpportunityControllerIntegrationTest {
                 "Description",
                 BigDecimal.TEN,
                 Stage.PROSPECTING,
-                "{}",
+                java.util.Map.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -126,7 +127,7 @@ class OpportunityControllerIntegrationTest {
                 "Description",
                 BigDecimal.TEN,
                 Stage.PROSPECTING,
-                "{}",
+                java.util.Map.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -137,7 +138,7 @@ class OpportunityControllerIntegrationTest {
                 "Description",
                 BigDecimal.TEN,
                 Stage.PROSPECTING,
-                "{}",
+                java.util.Map.of(),
                 domain.getCreatedAt(),
                 domain.getUpdatedAt()
         );
@@ -169,7 +170,7 @@ class OpportunityControllerIntegrationTest {
                 "Description",
                 BigDecimal.TEN,
                 Stage.PROSPECTING,
-                "{}",
+                java.util.Map.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -201,7 +202,7 @@ class OpportunityControllerIntegrationTest {
                 "Updated Description",
                 BigDecimal.TEN,
                 Stage.PROPOSAL,
-                "{}"
+                java.util.Map.of()
         );
 
         Opportunity domainUpdates = new Opportunity(
@@ -210,7 +211,7 @@ class OpportunityControllerIntegrationTest {
                 "Updated Description",
                 BigDecimal.TEN,
                 Stage.PROPOSAL,
-                "{}",
+                java.util.Map.of(),
                 null,
                 null
         );
@@ -221,7 +222,7 @@ class OpportunityControllerIntegrationTest {
                 "Updated Description",
                 BigDecimal.TEN,
                 Stage.PROPOSAL,
-                "{}",
+                java.util.Map.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -232,7 +233,7 @@ class OpportunityControllerIntegrationTest {
                 "Updated Description",
                 BigDecimal.TEN,
                 Stage.PROPOSAL,
-                "{}",
+                java.util.Map.of(),
                 updatedDomain.getCreatedAt(),
                 updatedDomain.getUpdatedAt()
         );
@@ -265,7 +266,7 @@ class OpportunityControllerIntegrationTest {
                 "Description",
                 null,
                 Stage.PROSPECTING,
-                "{}"
+                java.util.Map.of()
         );
 
         mockMvc.perform(post("/api/opportunities")
@@ -275,5 +276,42 @@ class OpportunityControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Validation failed"))
                 .andExpect(jsonPath("$.errors.title").value("Title is required"))
                 .andExpect(jsonPath("$.errors.amount").value("Amount is required"));
+    }
+
+    @Test
+    void shouldMoveOpportunity() throws Exception {
+        UUID id = UUID.randomUUID();
+        MoveOpportunityRequest request = new MoveOpportunityRequest(Stage.PROPOSAL);
+
+        Opportunity updatedDomain = new Opportunity(
+                id,
+                "Title",
+                "Description",
+                BigDecimal.TEN,
+                Stage.PROPOSAL,
+                java.util.Map.of(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        OpportunityResponse response = new OpportunityResponse(
+                id,
+                "Title",
+                "Description",
+                BigDecimal.TEN,
+                Stage.PROPOSAL,
+                java.util.Map.of(),
+                updatedDomain.getCreatedAt(),
+                updatedDomain.getUpdatedAt()
+        );
+
+        when(moveOpportunityUseCase.moveOpportunity(id, Stage.PROPOSAL)).thenReturn(updatedDomain);
+        when(mapper.toResponse(updatedDomain)).thenReturn(response);
+
+        mockMvc.perform(patch("/api/opportunities/{id}/move", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.stage").value("PROPOSAL"));
     }
 }

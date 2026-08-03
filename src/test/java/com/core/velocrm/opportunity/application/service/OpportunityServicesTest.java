@@ -1,6 +1,8 @@
 package com.core.velocrm.opportunity.application.service;
 
+import com.core.velocrm.opportunity.application.port.out.EventPublisherPort;
 import com.core.velocrm.opportunity.application.port.out.OpportunityRepositoryPort;
+import com.core.velocrm.opportunity.domain.event.OpportunityMovedEvent;
 import com.core.velocrm.opportunity.domain.exception.OpportunityNotFoundException;
 import com.core.velocrm.opportunity.domain.model.Opportunity;
 import com.core.velocrm.opportunity.domain.model.Stage;
@@ -26,11 +28,15 @@ class OpportunityServicesTest {
     @Mock
     private OpportunityRepositoryPort repositoryPort;
 
+    @Mock
+    private EventPublisherPort eventPublisherPort;
+
     private CreateOpportunityService createService;
     private FindOpportunityByIdService findByIdService;
     private FindAllOpportunitiesService findAllService;
     private UpdateOpportunityService updateService;
     private DeleteOpportunityService deleteService;
+    private MoveOpportunityService moveService;
 
     @BeforeEach
     void setUp() {
@@ -39,6 +45,7 @@ class OpportunityServicesTest {
         findAllService = new FindAllOpportunitiesService(repositoryPort);
         updateService = new UpdateOpportunityService(repositoryPort);
         deleteService = new DeleteOpportunityService(repositoryPort);
+        moveService = new MoveOpportunityService(repositoryPort, eventPublisherPort);
     }
 
     @Test
@@ -49,7 +56,7 @@ class OpportunityServicesTest {
                 "Description",
                 BigDecimal.TEN,
                 Stage.PROSPECTING,
-                "{}",
+                java.util.Map.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -72,7 +79,7 @@ class OpportunityServicesTest {
                 "Description",
                 BigDecimal.TEN,
                 Stage.PROSPECTING,
-                "{}",
+                java.util.Map.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -93,7 +100,7 @@ class OpportunityServicesTest {
                 "Description",
                 BigDecimal.TEN,
                 Stage.PROSPECTING,
-                "{}",
+                java.util.Map.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -115,7 +122,7 @@ class OpportunityServicesTest {
                 "Old Description",
                 BigDecimal.ONE,
                 Stage.PROSPECTING,
-                "{}",
+                java.util.Map.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -126,7 +133,7 @@ class OpportunityServicesTest {
                 "New Description",
                 BigDecimal.TEN,
                 Stage.PROPOSAL,
-                "{\"updated\": true}",
+                java.util.Map.of("updated", true),
                 null,
                 null
         );
@@ -142,7 +149,7 @@ class OpportunityServicesTest {
         assertEquals("New Description", updated.getDescription());
         assertEquals(BigDecimal.TEN, updated.getAmount());
         assertEquals(Stage.PROPOSAL, updated.getStage());
-        assertEquals("{\"updated\": true}", updated.getCustomAttributes());
+        assertEquals(java.util.Map.of("updated", true), updated.getCustomAttributes());
     }
 
     @Test
@@ -154,7 +161,7 @@ class OpportunityServicesTest {
                 "New Description",
                 BigDecimal.TEN,
                 Stage.PROPOSAL,
-                "{}",
+                java.util.Map.of(),
                 null,
                 null
         );
@@ -173,7 +180,7 @@ class OpportunityServicesTest {
                 "Description",
                 BigDecimal.TEN,
                 Stage.PROSPECTING,
-                "{}",
+                java.util.Map.of(),
                 LocalDateTime.now(),
                 LocalDateTime.now()
         );
@@ -191,5 +198,38 @@ class OpportunityServicesTest {
         when(repositoryPort.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(OpportunityNotFoundException.class, () -> deleteService.deleteOpportunity(id));
+    }
+
+    @Test
+    void shouldMoveOpportunity() {
+        UUID id = UUID.randomUUID();
+        Opportunity existing = new Opportunity(
+                id,
+                "Title",
+                "Description",
+                BigDecimal.TEN,
+                Stage.PROSPECTING,
+                java.util.Map.of(),
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        when(repositoryPort.findById(id)).thenReturn(Optional.of(existing));
+        when(repositoryPort.save(any(Opportunity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Opportunity moved = moveService.moveOpportunity(id, Stage.PROPOSAL);
+
+        assertNotNull(moved);
+        assertEquals(Stage.PROPOSAL, moved.getStage());
+        verify(repositoryPort, times(1)).save(existing);
+        verify(eventPublisherPort, times(1)).publish(any(OpportunityMovedEvent.class));
+    }
+
+    @Test
+    void shouldThrowWhenMovingNonExistentOpportunity() {
+        UUID id = UUID.randomUUID();
+        when(repositoryPort.findById(id)).thenReturn(Optional.empty());
+
+        assertThrows(OpportunityNotFoundException.class, () -> moveService.moveOpportunity(id, Stage.PROPOSAL));
     }
 }

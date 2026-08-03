@@ -94,4 +94,5 @@ public class OpportunityController {
         deleteOpportunityUseCase.deleteOpportunity(id);
         return ResponseEntity.noContent().build();
     }
+
 }
