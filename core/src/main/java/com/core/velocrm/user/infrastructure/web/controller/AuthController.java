@@ -2,10 +2,10 @@ package com.core.velocrm.user.infrastructure.web.controller;
 
 import com.core.velocrm.user.application.port.in.AuthenticateUserUseCase;
 import com.core.velocrm.user.application.port.in.RegisterUserUseCase;
-import com.core.velocrm.user.domain.model.User;
 import com.core.velocrm.user.infrastructure.dto.AuthRequest;
 import com.core.velocrm.user.infrastructure.dto.AuthResponse;
 import com.core.velocrm.user.infrastructure.dto.RegisterUserRequest;
+import com.core.velocrm.user.infrastructure.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +26,9 @@ public class AuthController {
 
     @PostMapping("/register")
     @Operation(summary = "Registrar novo usuário")
-    public ResponseEntity<User> register(@Valid @RequestBody RegisterUserRequest request) {
-        User user = registerUserUseCase.registerUser(request.email(), request.password(), request.roles());
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterUserRequest request) {
+        var user = registerUserUseCase.registerUser(request.email(), request.password(), request.roles());
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.fromDomain(user));
     }
 
     @PostMapping("/login")
