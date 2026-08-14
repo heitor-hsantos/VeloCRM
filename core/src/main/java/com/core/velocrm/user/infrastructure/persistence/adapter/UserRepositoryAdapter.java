@@ -42,4 +42,19 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         Set<RoleEntity> entities = roleJpaRepository.findByNameIn(roleNames);
         return entities.stream().map(mapper::toDomainRole).collect(Collectors.toSet());
     }
+
+    @Override
+    public Optional<User> findById(java.util.UUID id) {
+        return userJpaRepository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public java.util.List<User> findAll() {
+        return userJpaRepository.findAll().stream().map(mapper::toDomain).collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteById(java.util.UUID id) {
+        userJpaRepository.deleteById(id);
+    }
 }
