@@ -14,7 +14,7 @@ services:
       retries: 5
 
   pgadmin:
-    image: 'dpage/pgadmin4'
+    image: 'dpage/pgadmin4:9.17'
     environment:
       - 'PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-admin@velocrm.com}'
       - 'PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin}'
