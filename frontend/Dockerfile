@@ -11,5 +11,5 @@ COPY . .
 
 EXPOSE 3000
 
-# For a dev environment, simple npm start is enough
-CMD ["npm", "start"]
+# For a dev environment, simple npm run dev is enough
+CMD ["npm", "run", "dev"]
