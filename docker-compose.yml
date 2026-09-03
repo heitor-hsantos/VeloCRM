@@ -37,11 +37,19 @@ services:
     build: ./core
     ports:
       - '8080:8080'
+    dns:
+      - 8.8.8.8
     environment:
-      - 'SPRING_PROFILES_ACTIVE=docker'
-      - 'SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${POSTGRES_DB:-velocrmdb}'
-      - 'SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-myuser}'
-      - 'SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}'
+
+      - 'SPRING_PROFILES_ACTIVE=supabase'
+      # Repassando do .env para dentro do container
+      - 'SUPABASE_DB_HOST=${SUPABASE_DB_HOST}'
+      - 'SUPABASE_DB_PORT=${SUPABASE_DB_PORT}'
+      - 'SUPABASE_DB_NAME=${SUPABASE_DB_NAME}'
+      - 'SUPABASE_DB_USER=${SUPABASE_DB_USER}'
+      - 'SUPABASE_DB_PASSWORD=${SUPABASE_DB_PASSWORD}'
+      - 'SUPABASE_DB_SSL_MODE=${SUPABASE_DB_SSL_MODE}'
+      - 'SUPABASE__URL=${SUPABASE__URL}'
       - 'SPRING_DATA_REDIS_HOST=redis'
       - 'SPRING_DATA_REDIS_PORT=6379'
     depends_on:
