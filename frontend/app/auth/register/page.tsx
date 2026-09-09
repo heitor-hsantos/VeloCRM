@@ -36,9 +36,10 @@ export default function RegisterPage() {
             setTimeout(() => {
                 router.push('/auth/login');
             }, 2000);
-        } catch (err: any) {
+        } catch (err) {
             console.error('Erro ao registrar:', err);
-            setError(err.message || 'Erro ao realizar o cadastro. Tente novamente.');
+            const errorMessage = err instanceof Error ? err.message : 'Erro ao realizar o cadastro. Tente novamente.';
+            setError(errorMessage);
         } finally {
             setIsLoading(false);
         }

@@ -33,13 +33,14 @@ public class UserController {
     @PostMapping
     @Operation(summary = "Create user")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
-        var user = registerUserUseCase.registerUser(request.email(), request.password(), request.roles());
+        var user = registerUserUseCase.registerUser(request.name(),request.email(), request.password(), request.roles());
         return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.fromDomain(user));
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get user by ID")
     public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
+
         return ResponseEntity.ok(UserResponse.fromDomain(findUserByIdUseCase.findById(id)));
     }
 
