@@ -24,10 +24,11 @@ export default function LoginPage() {
             if (response.token) {
                 localStorage.setItem('token', response.token);
             }
-            router.push('/');
-        } catch (err: any) {
+            router.push('/authorized/home');
+        } catch (err) {
             console.error('Erro ao fazer login:', err);
-            setError(err.message || 'Credenciais inválidas. Tente novamente.');
+            const errorMessage = err instanceof Error ? err.message : 'Credenciais inválidas. Tente novamente.';
+            setError(errorMessage);
         } finally {
             setIsLoading(false);
         }
@@ -102,7 +103,7 @@ export default function LoginPage() {
                     </form>
 
                     <div className="mt-6 text-center text-sm text-[#1F2937]">
-                        Don't have an account? <Link href="/auth/register" className="text-[#0D9488] font-bold hover:underline">Sign Up</Link>
+                        Don&apos;t have an account? <Link href="/auth/register" className="text-[#0D9488] font-bold hover:underline">Sign Up</Link>
                     </div>
                 </div>
             </div>
