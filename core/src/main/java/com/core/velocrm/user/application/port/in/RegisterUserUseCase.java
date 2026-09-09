@@ -4,5 +4,5 @@ import com.core.velocrm.user.domain.model.User;
 import java.util.Set;
 
 public interface RegisterUserUseCase {
-    User registerUser(String email, String rawPassword, Set<String> roles);
+    User registerUser(String name, String email, String rawPassword, Set<String> roles);
 }
